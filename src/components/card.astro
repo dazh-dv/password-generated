@@ -1,0 +1,154 @@
+---
+import CopyClipboard from "./copy-clipboard.astro";
+import IconLock from "./icon-lock.astro";
+import InputCheck from "./input-check.astro";
+---
+
+<div class="lg:w-[1156px] max-md:w-[600px] max-sm:w-[400px] flex flex-col py-2 px-6 bg-[#23262d] rounded-[7px] text-gray-200 items-center overflow-hidden">
+	<div>
+		<h1 class="pt-11 text-3xl font-medium text-pink-400">Password Generator</h1>
+		<p class="p-4 font-normal text-gray-400">Generate a secure, password random</p>
+	</div>
+	<form id="form-generator" class="px-6 w-full">
+		<div class="flex justify-center">
+			<div class="relative lg:w-[450px]">
+				<IconLock />
+				<input id="password" type="text" name="password" class="px-10 py-1 h-10  w-full bg-[#58595e] border-gray-200 rounded placeholder:text-slate-300 text-slate-200 outline-none shadow-md select-none" readonly />
+				<button id="copy-password" type="button" class="absolute top-[6px] right-2 hover:bg-[#787a83] p-1 rounded-full">
+					<CopyClipboard class="h-[20px] w-[20px]" />
+				</button>
+			</div>
+		</div>
+		<div class="flex max-md:flex-col py-6 gap-6">
+			<div class="md:w-1/2 flex flex-col w-full">
+				<span class="font-medium text-pink-300 pb-2">Settings</span>
+				<div class="flex md:justify-around max-md:flex-wrap max-md:flex-col max-md:content-stretch me-4 gap-2 px-2">
+					<InputCheck label="Uppercase" value="uppercase" name="settings" checked/>
+					<InputCheck label="Lowercase" value="lowercase" name="settings" checked/>
+					<InputCheck label="Symbols" value="symbols" name="settings" checked/>
+					<InputCheck label="Numbers" value="numbers" name="settings" />
+				</div>
+			</div>
+			<div class="md:w-1/2 flex flex-col w-full">
+				<span class="font-medium text-pink-300 pb-2">Length</span>
+				<div class="flex items-center gap-3 px-2">
+					<input id="length-text-password" type="text" class="bg-[#58595e] w-10 h-10 rounded-sm text-lg font-bold px-2" value="16" readonly />
+					<input id="characters-range" class="w-full h-[6px]" name="characters" type="range" min="8" max="45" value="16" />
+				</div>
+			</div>
+		</div>
+		<div class="flex w-full justify-center items-center py-6">
+			<button type="submit" class="px-4 py-2 bg-pink-600 rounded-full align-middle text-lg font-semibold hover:bg-pink-600/80 transition-colors">
+				Generate Password
+			</button>
+		</div>
+	</form>
+</div>
+<style>
+	input[type=range] {
+    -webkit-appearance: none; 
+	}
+
+	input[type=range]::-webkit-slider-runnable-track {
+		background: rgb(83, 81, 82);
+		height: 6px;
+	}
+
+	input[type=range]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		background: rgb(219 39 119);
+		height: 18px;
+		width: 18px;
+		border-radius: 50%;
+		margin-top: -5px;
+		--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+		--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+		box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+	}
+
+	input[type=range]:hover::-webkit-slider-thumb {
+		background: rgb(219 39 119);
+	}
+</style>
+<script>
+	const $ = (element: string) => document.querySelector(element)
+
+	const $inputPassword = $('input[id="password"]') as HTMLInputElement
+	const $inputRange = $('input#characters-range') as HTMLInputElement
+	const $inputTextRange = $('input#length-text-password') as HTMLInputElement
+	const $formGenerator = $('#form-generator') as HTMLFormElement
+	const $copyPassword = $('#copy-password') as HTMLFormElement
+
+	$copyPassword.addEventListener('click', e => {
+		$inputPassword.select();
+  	document.execCommand('copy');
+	})
+
+	$inputRange.addEventListener('mousemove', () => {
+			$inputTextRange.value = $inputRange.value ?? '1'
+	})
+	$formGenerator.addEventListener('submit', (e) => {
+		e.preventDefault()
+		const formData = new FormData($formGenerator)
+		const settings = formData.getAll('settings') ?? ['uppercase', 'lowercase', 'symbols']
+		const length = $inputRange.value ?? '16'
+
+		const characters = [
+			{ 'uppercase': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' },
+			{ 'lowercase': 'abcdefghijklmnopqrstuvwxyz' },
+			{ 'symbols': '!@$%&_?' },
+			{ 'numbers': '123456789' }
+		]
+
+		let charset = '';
+		characters.forEach((item) => {
+			for (var key in item) {
+				const include = settings.includes(key)
+				if(include && item[key]) {
+					charset = charset + item[key]
+				}
+			}
+		})
+
+		let password = '';
+		if(parseInt(length)){
+			for (let i = 0; i < parseInt(length); i++) {
+				const randomIndex = Math.floor(Math.random() * charset.length);
+				password += charset[randomIndex];
+			}
+		}
+		$inputPassword.value = password
+	})
+
+	window.addEventListener('load',  () => {
+		const settings = ['uppercase', 'lowercase', 'symbols']
+		const length = '16'
+
+		const characters = [
+			{ 'uppercase': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' },
+			{ 'lowercase': 'abcdefghijklmnopqrstuvwxyz' },
+			{ 'symbols': '!@$%&_?' },
+			{ 'numbers': '123456789' }
+		]
+
+		let charset = '';
+		characters.forEach((item) => {
+			for (var key in item) {
+				const include = settings.includes(key)
+				if(include && item[key]) {
+					charset = charset + item[key]
+				}
+			}
+		})
+
+		let password = '';
+		if(parseInt(length)){
+			for (let i = 0; i < parseInt(length); i++) {
+				const randomIndex = Math.floor(Math.random() * charset.length);
+				password += charset[randomIndex];
+			}
+		}
+		$inputPassword.value = password
+
+	})
+</script>
