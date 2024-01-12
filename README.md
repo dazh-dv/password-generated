@@ -10,7 +10,8 @@ Welcome to our Password Generator, a web application designed to create secure a
 - Intuitive and user-friendly interface
 
 ## Screenshots
-![Captura de pantalla 2024-01-12 013236](https://github.com/dazh-dv/password-generated/assets/131713617/03f721e8-29d0-4e81-a798-29dd7a589956)
+![Captura de pantalla 2024-01-12 013236](https://github.com/dazh-dv/password-generated/assets/131713617/455e5598-5b6a-4796-9d67-7e5b52156470)
+
 
 ## How to Use
 1. Open the application in your web browser.
